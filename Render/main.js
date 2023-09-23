@@ -6,13 +6,17 @@ import { globalState } from "../index.js";
 function globalStateRender() {
   globalState.forEach((row) => {
     row.forEach((element) => {
-      // if square highlight is true
       if (element.highlight) {
         const hightlightSpan = document.createElement("span");
         hightlightSpan.classList.add("highlight");
         document.getElementById(element.id).appendChild(hightlightSpan);
-      }
-      if (element.piece != null) {
+      } else if (element.highlight === null) {
+        const el = document.getElementById(element.id);
+        const highlights = Array.from(el.getElementsByTagName("span"));
+        highlights.forEach((element) => {
+          el.removeChild(element);
+        });
+        // document.getElementById(element.id).innerHTML = "";
       }
     });
   });
@@ -21,34 +25,22 @@ function globalStateRender() {
 // move element to square with id
 function moveElement(piece, id) {
   const flatData = globalState.flat();
-
   flatData.forEach((el) => {
     if (el.id == piece.current_position) {
       delete el.piece;
     }
-
     if (el.id == id) {
       el.piece = piece;
     }
   });
-
   clearHightlight();
-
   const previousPiece = document.getElementById(piece.current_position);
   previousPiece.classList.remove("highlightYellow");
   const currentPiece = document.getElementById(id);
   currentPiece.innerHTML = previousPiece.innerHTML;
   previousPiece.innerHTML = "";
-
   piece.current_position = id;
-}
-
-function clearPreviousSelfHighlight(piece) {
-  if (piece) {
-    document
-      .getElementById(piece.current_position)
-      .classList.remove("highlightYellow");
-  }
+  // globalStateRender();
 }
 
 function selfHighlight(piece) {
@@ -163,9 +155,10 @@ function clearHightlight() {
   const flatData = globalState.flat();
 
   flatData.forEach((el) => {
-    // if (el.captureHighlight) {
-    //   document.getElementById(el.id).classList.remove("captureColor");
-    // }
+    if (el.captureHighlight) {
+      document.getElementById(el.id).classList.remove("captureColor");
+      el.captureHighlight = false;
+    }
 
     if (el.highlight) {
       el.highlight = null;
@@ -180,7 +173,6 @@ export {
   renderHighlight,
   clearHightlight,
   selfHighlight,
-  clearPreviousSelfHighlight,
   moveElement,
   globalStateRender,
 };

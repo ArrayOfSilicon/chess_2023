@@ -4,7 +4,7 @@ import { renderHighlight } from "../Render/main.js";
 import { clearHightlight } from "../Render/main.js";
 import { selfHighlight } from "../Render/main.js";
 import { globalStateRender } from "../Render/main.js";
-import { clearPreviousSelfHighlight } from "../Render/main.js";
+// import { clearPreviousSelfHighlight } from "../Render/main.js";
 import { moveElement } from "../Render/main.js";
 import { checkPieceOfOpponentOnElement } from "../Helper/commonHelper.js";
 
@@ -25,24 +25,30 @@ function clearHighlightLocal() {
 
 // move piece from x-square to y-square
 function movePieceFromXToY(from, to) {
-  // console.log(from, to);
+  to.piece = from.piece;
+  from.piece = null;
+  globalStateRender();
 }
 
 // white pawn event
-function whitePawnClick({ piece }) {
-  // globalStateRender();
+function whitePawnClick(square) {
+  const piece = square.piece;
 
-  if (hightlight_state) return;
-
-  clearPreviousSelfHighlight(selfHighlightState);
-
-  // if clicked on same element twice
   if (piece == selfHighlightState) {
-    clearPreviousSelfHighlight(selfHighlightState);
-    selfHighlightState = null;
     clearHighlightLocal();
+    clearPreviousSelfHighlight(selfHighlightState);
     return;
   }
+
+  if (square.captureHighlight) {
+    // movePieceFromXToY();
+    moveElement(selfHighlightState, piece.current_position);
+    clearPreviousSelfHighlight(selfHighlightState);
+    return;
+  }
+
+  clearPreviousSelfHighlight(selfHighlightState);
+  // if clicked on same element twice
 
   // highlighting logic
   selfHighlight(piece);
@@ -110,25 +116,26 @@ function whitePawnClick({ piece }) {
   // console.log(globalState);
 }
 
-// black pawn event
-function blackPawnClick({ piece }) {
-  // globalStateRender();
+// black pawn function
+function blackPawnClick(square) {
+  const piece = square.piece;
 
-  if (hightlight_state) {
-    movePieceFromXToY(selfHighlightState, piece);
+  if (piece == selfHighlightState) {
+    clearPreviousSelfHighlight(selfHighlightState);
+    clearHighlightLocal();
+    return;
+  }
+
+  if (square.captureHighlight) {
+    // movePieceFromXToY();
+    moveElement(selfHighlightState, piece.current_position);
+    clearPreviousSelfHighlight(selfHighlightState);
     return;
   }
 
   clearPreviousSelfHighlight(selfHighlightState);
 
-  // // if clicked on same element twice
-  if (piece == selfHighlightState) {
-    clearPreviousSelfHighlight(selfHighlightState);
-    selfHighlightState = null;
-    clearHighlightLocal();
-    return;
-  }
-
+  // highlighting logic
   selfHighlight(piece);
   hightlight_state = true;
   selfHighlightState = piece;
@@ -161,12 +168,22 @@ function blackPawnClick({ piece }) {
 
     globalStateRender();
   } else {
+    const col1 = `${String.fromCharCode(current_pos[0].charCodeAt(0) - 1)}${
+      Number(current_pos[1]) - 1
+    }`;
+    const col2 = `${String.fromCharCode(current_pos[0].charCodeAt(0) + 1)}${
+      Number(current_pos[1]) - 1
+    }`;
+
+    const captureIds = [col1, col2];
+
     const hightlightSquareIds = [
       `${current_pos[0]}${Number(current_pos[1]) - 1}`,
     ];
 
-    // clear board for any previous highlight
-    clearHighlightLocal();
+    captureIds.forEach((element) => {
+      checkPieceOfOpponentOnElement(element, "black");
+    });
 
     hightlightSquareIds.forEach((hightlight) => {
       globalState.forEach((row) => {
@@ -177,11 +194,25 @@ function blackPawnClick({ piece }) {
         });
       });
     });
+
+    globalStateRender();
   }
 
-  globalStateRender();
   // console.log(globalState);
 }
+
+function clearPreviousSelfHighlight(piece) {
+  if (piece) {
+    document
+      .getElementById(piece.current_position)
+      .classList.remove("highlightYellow");
+    // console.log(piece);
+    // selfHighlight = false;
+    selfHighlightState = null;
+  }
+}
+
+// // black pawn event
 
 function GlobalEvent() {
   ROOT_DIV.addEventListener("click", function (event) {
@@ -202,10 +233,12 @@ function GlobalEvent() {
         event.target.localName == "span"
       ) {
         if (event.target.localName == "span") {
+          clearPreviousSelfHighlight(selfHighlightState);
           const id = event.target.parentNode.id;
           moveElement(moveState, id);
           moveState = null;
         } else {
+          clearPreviousSelfHighlight(selfHighlightState);
           const id = event.target.id;
           moveElement(moveState, id);
           moveState = null;
@@ -214,10 +247,9 @@ function GlobalEvent() {
         // clear highlights
         clearHighlightLocal();
         clearPreviousSelfHighlight(selfHighlightState);
-        selfHighlightState = null;
       }
     }
   });
 }
 
-export { GlobalEvent };
+export { GlobalEvent, movePieceFromXToY };
