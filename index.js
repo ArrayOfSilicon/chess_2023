@@ -4,8 +4,21 @@ import { GlobalEvent } from "./Events/global.js";
 
 // will be usefull till game ends
 const globalState = initGame();
+let keySquareMapper = {};
+
+globalState.flat().forEach((square) => {
+  keySquareMapper[square.id] = square;
+});
 
 initGameRender(globalState);
 GlobalEvent();
 
-export { globalState };
+String.prototype.replaceAt = function (index, replacement) {
+  return (
+    this.substring(0, index) +
+    replacement +
+    this.substring(index + replacement.length)
+  );
+};
+
+export { globalState, keySquareMapper };

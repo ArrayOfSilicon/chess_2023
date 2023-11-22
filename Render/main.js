@@ -10,7 +10,8 @@ function globalStateRender() {
         const hightlightSpan = document.createElement("span");
         hightlightSpan.classList.add("highlight");
         document.getElementById(element.id).appendChild(hightlightSpan);
-      } else if (element.highlight === null) {
+        // } else if (element.highlight === null) {
+      } else {
         const el = document.getElementById(element.id);
         const highlights = Array.from(el.getElementsByTagName("span"));
         highlights.forEach((element) => {
