@@ -1,6 +1,7 @@
 import { giveBishopHighlightIds } from "../Helper/commonHelper.js";
 import { checkSquareCaptureId } from "../Helper/commonHelper.js";
 import { checkPieceOfOpponentOnElement } from "../Helper/commonHelper.js";
+import { checkWeatherPieceExistsOrNot } from "../Helper/commonHelper.js";
 import { ROOT_DIV } from "../Helper/constants.js";
 import { renderHighlight } from "../Render/main.js";
 import { clearHightlight } from "../Render/main.js";
@@ -142,6 +143,7 @@ function whiteBishopClick(square) {
   const flatArray = globalState.flat();
 
   let hightlightSquareIds = giveBishopHighlightIds(current_pos);
+  let temp = [];
 
   const { bottomLeft, topLeft, bottomRight, topRight } = hightlightSquareIds;
 
@@ -150,6 +152,12 @@ function whiteBishopClick(square) {
   result.push(checkSquareCaptureId(topLeft));
   result.push(checkSquareCaptureId(bottomRight));
   result.push(checkSquareCaptureId(topRight));
+
+  // insert into temp
+  temp.push(bottomLeft);
+  temp.push(topLeft);
+  temp.push(bottomRight);
+  temp.push(topRight);
 
   // hightlightSquareIds = checkSquareCaptureId(hightlightSquareIds);
   hightlightSquareIds = result.flat();
@@ -164,20 +172,36 @@ function whiteBishopClick(square) {
     element.highlight = true;
   });
 
-  // capture id logic
-  const col1 = `${String.fromCharCode(current_pos[0].charCodeAt(0) - 1)}${
-    Number(current_pos[1]) + 1
-  }`;
-  const col2 = `${String.fromCharCode(current_pos[0].charCodeAt(0) + 1)}${
-    Number(current_pos[1]) + 1
-  }`;
+  let captureIds = [];
 
-  let captureIds = [col1, col2];
-  // captureIds = checkSquareCaptureId(captureIds);
+  for (let index = 0; index < temp.length; index++) {
+    const arr = temp[index];
 
-  captureIds.forEach((element) => {
-    checkPieceOfOpponentOnElement(element, "white");
-  });
+    for (let j = 0; j < arr.length; j++) {
+      const element = arr[j];
+
+      let checkPieceResult = checkWeatherPieceExistsOrNot(element);
+      if (
+        checkPieceResult &&
+        checkPieceResult.piece &&
+        checkPieceResult.piece.piece_name.toLowerCase().includes("white")
+      ) {
+        break;
+      }
+
+      if (checkPieceOfOpponentOnElement(element, "white")) {
+        break;
+      }
+    }
+  }
+
+  // let captureIds = [col1, col2];
+  // console.log(captureIds);
+  // // captureIds = checkSquareCaptureId(captureIds);
+
+  // captureIds.forEach((element) => {
+  //   checkPieceOfOpponentOnElement(element, "white");
+  // });
 
   globalStateRender();
 }
@@ -216,6 +240,7 @@ function blackBishopClick(square) {
   const flatArray = globalState.flat();
 
   let hightlightSquareIds = giveBishopHighlightIds(current_pos);
+  let temp = [];
 
   const { bottomLeft, topLeft, bottomRight, topRight } = hightlightSquareIds;
 
@@ -224,6 +249,12 @@ function blackBishopClick(square) {
   result.push(checkSquareCaptureId(topLeft));
   result.push(checkSquareCaptureId(bottomRight));
   result.push(checkSquareCaptureId(topRight));
+
+  // insert into temp
+  temp.push(bottomLeft);
+  temp.push(topLeft);
+  temp.push(bottomRight);
+  temp.push(topRight);
 
   // hightlightSquareIds = checkSquareCaptureId(hightlightSquareIds);
   hightlightSquareIds = result.flat();
@@ -238,20 +269,36 @@ function blackBishopClick(square) {
     element.highlight = true;
   });
 
-  // capture id logic
-  const col1 = `${String.fromCharCode(current_pos[0].charCodeAt(0) - 1)}${
-    Number(current_pos[1]) + 1
-  }`;
-  const col2 = `${String.fromCharCode(current_pos[0].charCodeAt(0) + 1)}${
-    Number(current_pos[1]) + 1
-  }`;
+  let captureIds = [];
 
-  let captureIds = [col1, col2];
-  // captureIds = checkSquareCaptureId(captureIds);
+  for (let index = 0; index < temp.length; index++) {
+    const arr = temp[index];
 
-  captureIds.forEach((element) => {
-    checkPieceOfOpponentOnElement(element, "black");
-  });
+    for (let j = 0; j < arr.length; j++) {
+      const element = arr[j];
+
+      let checkPieceResult = checkWeatherPieceExistsOrNot(element);
+      if (
+        checkPieceResult &&
+        checkPieceResult.piece &&
+        checkPieceResult.piece.piece_name.toLowerCase().includes("black")
+      ) {
+        break;
+      }
+
+      if (checkPieceOfOpponentOnElement(element, "black")) {
+        break;
+      }
+    }
+  }
+
+  // let captureIds = [col1, col2];
+  // console.log(captureIds);
+  // // captureIds = checkSquareCaptureId(captureIds);
+
+  // captureIds.forEach((element) => {
+  //   checkPieceOfOpponentOnElement(element, "white");
+  // });
 
   globalStateRender();
 }
