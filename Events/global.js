@@ -3,6 +3,8 @@ import { checkSquareCaptureId } from "../Helper/commonHelper.js";
 import { checkPieceOfOpponentOnElement } from "../Helper/commonHelper.js";
 import { checkWeatherPieceExistsOrNot } from "../Helper/commonHelper.js";
 import { giveRookHighlightIds } from "../Helper/commonHelper.js";
+import { giveKnightHighlightIds } from "../Helper/commonHelper.js";
+import { giveQueenHighlightIds } from "../Helper/commonHelper.js";
 import { ROOT_DIV } from "../Helper/constants.js";
 import { renderHighlight } from "../Render/main.js";
 import { clearHightlight } from "../Render/main.js";
@@ -498,6 +500,412 @@ function whiteRookClick(square) {
   globalStateRender();
 }
 
+// handle knight click
+function whiteKnightClick(square) {
+  const piece = square.piece;
+
+  if (piece == selfHighlightState) {
+    clearPreviousSelfHighlight(selfHighlightState);
+    clearHighlightLocal();
+    return;
+  }
+
+  if (square.captureHighlight) {
+    // movePieceFromXToY();
+    moveElement(selfHighlightState, piece.current_position);
+    clearPreviousSelfHighlight(selfHighlightState);
+    clearHighlightLocal();
+    return;
+  }
+
+  // clear all highlights
+  clearPreviousSelfHighlight(selfHighlightState);
+  clearHighlightLocal();
+
+  // highlighting logic
+  selfHighlight(piece);
+  hightlight_state = true;
+  selfHighlightState = piece;
+
+  // add piece as move state
+  moveState = piece;
+
+  const current_pos = piece.current_position;
+  const flatArray = globalState.flat();
+
+  let hightlightSquareIds = giveKnightHighlightIds(current_pos);
+  // const { bottom, top, right, left } = hightlightSquareIds;
+  // let temp = [];
+
+
+  // let result = [];
+  // result.push(checkSquareCaptureId(bottom));
+  // result.push(checkSquareCaptureId(top));
+  // result.push(checkSquareCaptureId(right));
+  // result.push(checkSquareCaptureId(left));
+
+  // // insert into temp
+  // temp.push(bottom);
+  // temp.push(top);
+  // temp.push(right);
+  // temp.push(left);
+
+  // // hightlightSquareIds = checkSquareCaptureId(hightlightSquareIds);
+  // hightlightSquareIds = result.flat();
+
+  // hightlightSquareIds.forEach((hightlight) => {
+  //   const element = keySquareMapper[hightlight];
+  //   element.highlight = true;
+  // });
+
+  hightlightSquareIds.forEach((hightlight) => {
+    const element = keySquareMapper[hightlight];
+    element.highlight = true;
+  });
+
+  let captureIds = [];
+
+  // for (let index = 0; index < temp.length; index++) {
+  //   const arr = temp[index];
+
+  //   for (let j = 0; j < arr.length; j++) {
+  //     const element = arr[j];
+
+  //     let checkPieceResult = checkWeatherPieceExistsOrNot(element);
+  //     if (
+  //       checkPieceResult &&
+  //       checkPieceResult.piece &&
+  //       checkPieceResult.piece.piece_name.toLowerCase().includes("white")
+  //     ) {
+  //       break;
+  //     }
+
+  //     if (checkPieceOfOpponentOnElement(element, "white")) {
+  //       break;
+  //     }
+  //   }
+  // }
+
+  // let captureIds = [col1, col2];
+  // console.log(captureIds);
+  // // captureIds = checkSquareCaptureId(captureIds);
+
+  hightlightSquareIds.forEach((element) => {
+    checkPieceOfOpponentOnElement(element, "white");
+  });
+
+  globalStateRender();
+}
+
+// handle knight click
+function blackKnightClick(square) {
+  const piece = square.piece;
+
+  if (piece == selfHighlightState) {
+    clearPreviousSelfHighlight(selfHighlightState);
+    clearHighlightLocal();
+    return;
+  }
+
+  if (square.captureHighlight) {
+    // movePieceFromXToY();
+    moveElement(selfHighlightState, piece.current_position);
+    clearPreviousSelfHighlight(selfHighlightState);
+    clearHighlightLocal();
+    return;
+  }
+
+  // clear all highlights
+  clearPreviousSelfHighlight(selfHighlightState);
+  clearHighlightLocal();
+
+  // highlighting logic
+  selfHighlight(piece);
+  hightlight_state = true;
+  selfHighlightState = piece;
+
+  // add piece as move state
+  moveState = piece;
+
+  const current_pos = piece.current_position;
+  const flatArray = globalState.flat();
+
+  let hightlightSquareIds = giveKnightHighlightIds(current_pos);
+  // const { bottom, top, right, left } = hightlightSquareIds;
+  // console.log(hightlightSquareIds);
+  // let temp = [];
+
+
+  // let result = [];
+  // result.push(checkSquareCaptureId(bottom));
+  // result.push(checkSquareCaptureId(top));
+  // result.push(checkSquareCaptureId(right));
+  // result.push(checkSquareCaptureId(left));
+
+  // // insert into temp
+  // temp.push(bottom);
+  // temp.push(top);
+  // temp.push(right);
+  // temp.push(left);
+
+  // // hightlightSquareIds = checkSquareCaptureId(hightlightSquareIds);
+  // hightlightSquareIds = result.flat();
+
+  // hightlightSquareIds.forEach((hightlight) => {
+  //   const element = keySquareMapper[hightlight];
+  //   element.highlight = true;
+  // });
+
+  hightlightSquareIds.forEach((hightlight) => {
+    const element = keySquareMapper[hightlight];
+    element.highlight = true;
+  });
+
+ 
+
+  let captureIds = [];
+
+  // for (let index = 0; index < temp.length; index++) {
+  //   const arr = temp[index];
+
+  //   for (let j = 0; j < arr.length; j++) {
+  //     const element = arr[j];
+
+  //     let checkPieceResult = checkWeatherPieceExistsOrNot(element);
+  //     if (
+  //       checkPieceResult &&
+  //       checkPieceResult.piece &&
+  //       checkPieceResult.piece.piece_name.toLowerCase().includes("white")
+  //     ) {
+  //       break;
+  //     }
+
+  //     if (checkPieceOfOpponentOnElement(element, "white")) {
+  //       break;
+  //     }
+  //   }
+  // }
+
+  // let captureIds = [col1, col2];
+  // console.log(captureIds);
+  // // captureIds = checkSquareCaptureId(captureIds);
+
+  hightlightSquareIds.forEach((element) => {
+    checkPieceOfOpponentOnElement(element, "black");
+  });
+
+  globalStateRender();
+}
+
+// white queen event
+function whiteQueenClick(square) {
+  const piece = square.piece;
+
+  if (piece == selfHighlightState) {
+    clearPreviousSelfHighlight(selfHighlightState);
+    clearHighlightLocal();
+    return;
+  }
+
+  if (square.captureHighlight) {
+    // movePieceFromXToY();
+    moveElement(selfHighlightState, piece.current_position);
+    clearPreviousSelfHighlight(selfHighlightState);
+    clearHighlightLocal();
+    return;
+  }
+
+  // clear all highlights
+  clearPreviousSelfHighlight(selfHighlightState);
+  clearHighlightLocal();
+
+  // highlighting logic
+  selfHighlight(piece);
+  hightlight_state = true;
+  selfHighlightState = piece;
+
+  // add piece as move state
+  moveState = piece;
+
+  const current_pos = piece.current_position;
+  const flatArray = globalState.flat();
+
+  let hightlightSquareIds = giveQueenHighlightIds(current_pos);
+  let temp = [];
+
+  const { bottomLeft, topLeft, bottomRight, topRight,top, right, left, bottom } = hightlightSquareIds;
+
+  let result = [];
+  result.push(checkSquareCaptureId(bottomLeft));
+  result.push(checkSquareCaptureId(topLeft));
+  result.push(checkSquareCaptureId(bottomRight));
+  result.push(checkSquareCaptureId(topRight));
+  result.push(checkSquareCaptureId(top));
+  result.push(checkSquareCaptureId(right));
+  result.push(checkSquareCaptureId(bottom));
+  result.push(checkSquareCaptureId(left));
+
+  // insert into temp
+  temp.push(bottomLeft);
+  temp.push(topLeft);
+  temp.push(bottomRight);
+  temp.push(topRight);
+  temp.push(top);
+  temp.push(right);
+  temp.push(bottom);
+  temp.push(left);
+
+  // hightlightSquareIds = checkSquareCaptureId(hightlightSquareIds);
+  hightlightSquareIds = result.flat();
+
+  hightlightSquareIds.forEach((hightlight) => {
+    const element = keySquareMapper[hightlight];
+    element.highlight = true;
+  });
+
+  hightlightSquareIds.forEach((hightlight) => {
+    const element = keySquareMapper[hightlight];
+    element.highlight = true;
+  });
+
+  let captureIds = [];
+
+  for (let index = 0; index < temp.length; index++) {
+    const arr = temp[index];
+
+    for (let j = 0; j < arr.length; j++) {
+      const element = arr[j];
+
+      let checkPieceResult = checkWeatherPieceExistsOrNot(element);
+      if (
+        checkPieceResult &&
+        checkPieceResult.piece &&
+        checkPieceResult.piece.piece_name.toLowerCase().includes("white")
+      ) {
+        break;
+      }
+
+      if (checkPieceOfOpponentOnElement(element, "white")) {
+        break;
+      }
+    }
+  }
+
+  // let captureIds = [col1, col2];
+  // console.log(captureIds);
+  // // captureIds = checkSquareCaptureId(captureIds);
+
+  // captureIds.forEach((element) => {
+  //   checkPieceOfOpponentOnElement(element, "white");
+  // });
+
+  globalStateRender();
+}
+// black queen event
+function blackQueenClick(square) {
+  const piece = square.piece;
+
+  if (piece == selfHighlightState) {
+    clearPreviousSelfHighlight(selfHighlightState);
+    clearHighlightLocal();
+    return;
+  }
+
+  if (square.captureHighlight) {
+    // movePieceFromXToY();
+    moveElement(selfHighlightState, piece.current_position);
+    clearPreviousSelfHighlight(selfHighlightState);
+    clearHighlightLocal();
+    return;
+  }
+
+  // clear all highlights
+  clearPreviousSelfHighlight(selfHighlightState);
+  clearHighlightLocal();
+
+  // highlighting logic
+  selfHighlight(piece);
+  hightlight_state = true;
+  selfHighlightState = piece;
+
+  // add piece as move state
+  moveState = piece;
+
+  const current_pos = piece.current_position;
+  const flatArray = globalState.flat();
+
+  let hightlightSquareIds = giveQueenHighlightIds(current_pos);
+  let temp = [];
+
+  const { bottomLeft, topLeft, bottomRight, topRight,top, right, left, bottom } = hightlightSquareIds;
+
+  let result = [];
+  result.push(checkSquareCaptureId(bottomLeft));
+  result.push(checkSquareCaptureId(topLeft));
+  result.push(checkSquareCaptureId(bottomRight));
+  result.push(checkSquareCaptureId(topRight));
+  result.push(checkSquareCaptureId(top));
+  result.push(checkSquareCaptureId(right));
+  result.push(checkSquareCaptureId(bottom));
+  result.push(checkSquareCaptureId(left));
+
+  // insert into temp
+  temp.push(bottomLeft);
+  temp.push(topLeft);
+  temp.push(bottomRight);
+  temp.push(topRight);
+  temp.push(top);
+  temp.push(right);
+  temp.push(bottom);
+  temp.push(left);
+
+  // hightlightSquareIds = checkSquareCaptureId(hightlightSquareIds);
+  hightlightSquareIds = result.flat();
+
+  hightlightSquareIds.forEach((hightlight) => {
+    const element = keySquareMapper[hightlight];
+    element.highlight = true;
+  });
+
+  hightlightSquareIds.forEach((hightlight) => {
+    const element = keySquareMapper[hightlight];
+    element.highlight = true;
+  });
+
+  let captureIds = [];
+
+  for (let index = 0; index < temp.length; index++) {
+    const arr = temp[index];
+
+    for (let j = 0; j < arr.length; j++) {
+      const element = arr[j];
+
+      let checkPieceResult = checkWeatherPieceExistsOrNot(element);
+      if (
+        checkPieceResult &&
+        checkPieceResult.piece &&
+        checkPieceResult.piece.piece_name.toLowerCase().includes("black")
+      ) {
+        break;
+      }
+
+      if (checkPieceOfOpponentOnElement(element, "black")) {
+        break;
+      }
+    }
+  }
+
+  // let captureIds = [col1, col2];
+  // console.log(captureIds);
+  // // captureIds = checkSquareCaptureId(captureIds);
+
+  // captureIds.forEach((element) => {
+  //   checkPieceOfOpponentOnElement(element, "white");
+  // });
+
+  globalStateRender();
+}
+
 // black pawn function
 function blackPawnClick(square) {
   // clear board for any previous highlight
@@ -606,6 +1014,17 @@ function GlobalEvent() {
         blackRookClick(square);
       } else if (square.piece.piece_name == "WHITE_ROOK") {
         whiteRookClick(square);
+      } else if (square.piece.piece_name == "WHITE_KNIGHT") {
+        whiteKnightClick(square);
+      }
+       else if (square.piece.piece_name == "BLACK_KNIGHT") {
+        blackKnightClick(square);
+      }
+      else if (square.piece.piece_name == "WHITE_QUEEN") {
+        whiteQueenClick(square);
+      }
+      else if (square.piece.piece_name == "BLACK_QUEEN") {
+        blackQueenClick(square);
       }
     } else {
       const childElementsOfclickedEl = Array.from(event.target.childNodes);
