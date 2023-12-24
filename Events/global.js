@@ -2,8 +2,8 @@ import { giveBishopHighlightIds, giveRookCapturesIds } from "../Helper/commonHel
 import { checkSquareCaptureId } from "../Helper/commonHelper.js";
 import { checkPieceOfOpponentOnElement } from "../Helper/commonHelper.js";
 import { giveKingCaptureIds } from "../Helper/commonHelper.js";
+import { giveQueenCapturesIds } from "../Helper/commonHelper.js";
 import { checkWeatherPieceExistsOrNot } from "../Helper/commonHelper.js";
-
 import { giveRookHighlightIds, giveBishopCaptureIds } from "../Helper/commonHelper.js";
 import { giveKnightCaptureIds } from "../Helper/commonHelper.js";
 import { giveKingHighlightIds, giveKnightHighlightIds } from "../Helper/commonHelper.js";
@@ -18,6 +18,7 @@ import { globalPiece } from "../Render/main.js";
 // hightlighted or not => state
 let hightlight_state = false;
 let inTurn = "white";
+let whoInCheck = null;
 
 function changeTurn(){
   inTurn = inTurn === "white" ? "black" : "white";
@@ -25,7 +26,7 @@ function changeTurn(){
 
 function checkForCheck(){
 
-  if(inTurn === "white"){
+  if(inTurn === "black"){
       const whiteKingCurrentPosition = globalPiece.white_king.current_position;
       const knight_1 =  globalPiece.black_knight_1.current_position;
       const knight_2 =  globalPiece.black_knight_2.current_position;
@@ -36,20 +37,50 @@ function checkForCheck(){
       const rook_2 = globalPiece.black_rook_2.current_position;
       const queen = globalPiece.black_queen.current_position;
 
-      const finalCheckList = [];
-      finalCheckList.push(giveKnightCaptureIds(knight_1));
-      finalCheckList.push(giveKnightCaptureIds(knight_2));
-      finalCheckList.push(giveKingCaptureIds(king));
-      finalCheckList.push(giveBishopCaptureIds(bishop_1));
-      finalCheckList.push(giveBishopCaptureIds(bishop_2));
-      finalCheckList.push(giveRookCapturesIds(rook_1));
-      finalCheckList.push(giveRookCapturesIds(rook_2));
-      console.log(finalCheckList);
-      
+      let finalCheckList = [];
+      finalCheckList.push(giveKnightCaptureIds(knight_1, inTurn));
+      finalCheckList.push(giveKnightCaptureIds(knight_2, inTurn));
+      finalCheckList.push(giveKingCaptureIds(king, inTurn));
+      finalCheckList.push(giveBishopCaptureIds(bishop_1, inTurn));
+      finalCheckList.push(giveBishopCaptureIds(bishop_2, inTurn));
+      finalCheckList.push(giveRookCapturesIds(rook_1,inTurn));
+      finalCheckList.push(giveRookCapturesIds(rook_2,inTurn));
+      finalCheckList.push(giveQueenCapturesIds(queen,inTurn));
+
+      finalCheckList = finalCheckList.flat();
+      const checkOrNot = finalCheckList.find((element) => element === whiteKingCurrentPosition);
+
+      if(checkOrNot){
+        whoInCheck = "white";
+      }
       
     } else {
-    const blackKingCurrentPosition = globalPiece.black_king.current_position;
-    // console.log(blackKingCurrentPosition);
+      const blackKingCurrentPosition = globalPiece.black_king.current_position;
+      const knight_1 =  globalPiece.white_knight_1.current_position;
+      const knight_2 =  globalPiece.white_knight_2.current_position;
+      const king =  globalPiece.white_king.current_position;
+      const bishop_1 = globalPiece.white_bishop_1.current_position;
+      const bishop_2 = globalPiece.white_bishop_2.current_position;
+      const rook_1 = globalPiece.white_rook_1.current_position;
+      const rook_2 = globalPiece.white_rook_2.current_position;
+      const queen = globalPiece.white_queen.current_position;
+
+      let finalCheckList = [];
+      finalCheckList.push(giveKnightCaptureIds(knight_1, inTurn));
+      finalCheckList.push(giveKnightCaptureIds(knight_2, inTurn));
+      finalCheckList.push(giveKingCaptureIds(king, inTurn));
+      finalCheckList.push(giveBishopCaptureIds(bishop_1, inTurn));
+      finalCheckList.push(giveBishopCaptureIds(bishop_2, inTurn));
+      finalCheckList.push(giveRookCapturesIds(rook_1,inTurn));
+      finalCheckList.push(giveRookCapturesIds(rook_2,inTurn));
+      finalCheckList.push(giveQueenCapturesIds(queen,inTurn));
+
+      finalCheckList = finalCheckList.flat();
+      const checkOrNot = finalCheckList.find((element) => element === blackKingCurrentPosition);
+
+      if(checkOrNot){
+        whoInCheck = "black";
+      }
 
   }
 }

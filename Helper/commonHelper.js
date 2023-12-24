@@ -134,44 +134,104 @@ function giveBishopHighlightIds(id) {
   };
 }
 
-function giveBishopCaptureIds(id){
-  let result = giveBishopHighlightIds(id);
-  result = Object.values(result);
-  const returnArr = [];
-  console.log(result);
+function giveBishopCaptureIds(id, color){
 
-  for (let i = 0; i < result.length; i++) {
-    const array = result[i];
-
-    for (let j = 0; j < array.length; j++) {
-      const element = array[j];
-
-      if(!checkPieceOfOpponentOnElementNoDom(element,"black")){
-           break;
-      }
-
-      returnArr.push(element);
-
-    }
-    
+  if(!id){
+    return [];
   }
 
-  console.log(returnArr);
-  // result = result.filter(element => {
-  //   
-  // })
-  return [];
+  let hightlightSquareIds = giveBishopHighlightIds(id);
+
+  let temp = [];
+  const { bottomLeft, topLeft, bottomRight, topRight } = hightlightSquareIds;
+  let returnArr = [];
+
+  // insert into temp
+  temp.push(bottomLeft);
+  temp.push(topLeft);
+  temp.push(bottomRight);
+  temp.push(topRight);
+  
+  for (let index = 0; index < temp.length; index++) {
+    const arr = temp[index];
+
+    for (let j = 0; j < arr.length; j++) {
+      const element = arr[j];
+
+      let checkPieceResult = checkWeatherPieceExistsOrNot(element);
+      if (
+        checkPieceResult &&
+        checkPieceResult.piece &&
+        checkPieceResult.piece.piece_name.toLowerCase().includes(color)
+      ) {
+        break;
+      }
+
+      if (checkPieceOfOpponentOnElementNoDom(element, color)) {
+        returnArr.push(element)
+        break;
+      }
+    }
+  }
+
+ 
+  return returnArr;
+
 }
 
-function giveRookCapturesIds(id){
-  let result = giveRookHighlightIds(id);
-  result = Object.values(result).flat();
-  result = result.filter(element => {
-    if(checkPieceOfOpponentOnElementNoDom(element,"black")){
-      return true;
+function giveRookCapturesIds(id,color){
+
+  if(!id)
+  {
+    return [];
+  }
+
+  let hightlightSquareIds = giveRookHighlightIds(id);
+
+  let temp = [];
+  const { bottom, top, right, left } = hightlightSquareIds;
+  let returnArr = [];
+
+  // insert into temp
+  temp.push(bottom);
+  temp.push(top);
+  temp.push(right);
+  temp.push(left);
+  
+  for (let index = 0; index < temp.length; index++) {
+    const arr = temp[index];
+
+    for (let j = 0; j < arr.length; j++) {
+      const element = arr[j];
+
+      let checkPieceResult = checkWeatherPieceExistsOrNot(element);
+      if (
+        checkPieceResult &&
+        checkPieceResult.piece &&
+        checkPieceResult.piece.piece_name.toLowerCase().includes(color)
+      ) {
+        break;
+      }
+
+      if (checkPieceOfOpponentOnElementNoDom(element, color)) {
+        returnArr.push(element)
+        break;
+      }
     }
-  })
-  return result;
+  }
+
+  return returnArr;
+
+}
+
+function giveQueenCapturesIds(id,color){
+
+  if(!id) return [];
+
+  let returnArr = [];
+  returnArr.push(giveBishopCaptureIds(id, color))
+  returnArr.push(giveRookCapturesIds(id, color))
+  return returnArr.flat();
 }
 
 // function to give highlight ids for rook
@@ -409,16 +469,16 @@ function giveKnightHighlightIds(id) {
 }
 
 
-function giveKnightCaptureIds(id) {
+function giveKnightCaptureIds(id, color) {
 
   if (!id) {
-    return;
+    return [];
   }
 
   let returnArr  = giveKnightHighlightIds(id);
 
   returnArr = returnArr.filter(element => {
-    if(checkPieceOfOpponentOnElementNoDom(element, "black")){
+    if(checkPieceOfOpponentOnElementNoDom(element, color)){
       return true;
     }
   });
@@ -469,11 +529,16 @@ function giveKingHighlightIds(id){
 
   return returnResult;
 }
-function giveKingCaptureIds(id){
+function giveKingCaptureIds(id, color){
+
+  if(!id) {
+    return [];
+  }
+
   let result = giveKingHighlightIds(id);
   result = Object.values(result).flat();
   result = result.filter(element => {
-    if(checkPieceOfOpponentOnElementNoDom(element, "black")){
+    if(checkPieceOfOpponentOnElementNoDom(element, color)){
       return true;
     }
   })
@@ -490,6 +555,7 @@ export {
   giveKingHighlightIds,
   giveKnightHighlightIds,
   giveBishopCaptureIds,
+  giveQueenCapturesIds,
   giveKnightCaptureIds,
   checkWeatherPieceExistsOrNot,
   giveRookCapturesIds,
