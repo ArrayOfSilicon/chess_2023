@@ -19,6 +19,21 @@ function checkPieceOfOpponentOnElement(id, color) {
   return false;
 }
 
+// function to check if piece exists of opponent
+function checkPieceOfOpponentOnElementNoDom(id, color) {
+  const opponentColor = color === "white" ? "BLACK" : "WHITE";
+
+  const element = keySquareMapper[id];
+
+  if (!element) return false;
+
+  if (element.piece && element.piece.piece_name.includes(opponentColor)) {
+    return true;
+  }
+
+  return false;
+}
+
 // function to check weather piece exists or not by square-id
 function checkWeatherPieceExistsOrNot(squareId) {
   const square = keySquareMapper[squareId];
@@ -117,6 +132,46 @@ function giveBishopHighlightIds(id) {
     topRight: topRight(id),
     bottomRight: bottomRight(id),
   };
+}
+
+function giveBishopCaptureIds(id){
+  let result = giveBishopHighlightIds(id);
+  result = Object.values(result);
+  const returnArr = [];
+  console.log(result);
+
+  for (let i = 0; i < result.length; i++) {
+    const array = result[i];
+
+    for (let j = 0; j < array.length; j++) {
+      const element = array[j];
+
+      if(!checkPieceOfOpponentOnElementNoDom(element,"black")){
+           break;
+      }
+
+      returnArr.push(element);
+
+    }
+    
+  }
+
+  console.log(returnArr);
+  // result = result.filter(element => {
+  //   
+  // })
+  return [];
+}
+
+function giveRookCapturesIds(id){
+  let result = giveRookHighlightIds(id);
+  result = Object.values(result).flat();
+  result = result.filter(element => {
+    if(checkPieceOfOpponentOnElementNoDom(element,"black")){
+      return true;
+    }
+  })
+  return result;
 }
 
 // function to give highlight ids for rook
@@ -353,6 +408,24 @@ function giveKnightHighlightIds(id) {
   return [...top(), ...bottom(), ...left(), ...right()];
 }
 
+
+function giveKnightCaptureIds(id) {
+
+  if (!id) {
+    return;
+  }
+
+  let returnArr  = giveKnightHighlightIds(id);
+
+  returnArr = returnArr.filter(element => {
+    if(checkPieceOfOpponentOnElementNoDom(element, "black")){
+      return true;
+    }
+  });
+
+  return returnArr;
+}
+
 // function to give highlight ids for queen
 function giveQueenHighlightIds(id){
   const rookMoves = giveRookHighlightIds(id)
@@ -396,14 +469,29 @@ function giveKingHighlightIds(id){
 
   return returnResult;
 }
+function giveKingCaptureIds(id){
+  let result = giveKingHighlightIds(id);
+  result = Object.values(result).flat();
+  result = result.filter(element => {
+    if(checkPieceOfOpponentOnElementNoDom(element, "black")){
+      return true;
+    }
+  })
+
+  return result;
+}
 
 export {
   checkPieceOfOpponentOnElement,
   checkSquareCaptureId,
+  giveKingCaptureIds,
   giveRookHighlightIds,
   giveQueenHighlightIds,
   giveKingHighlightIds,
   giveKnightHighlightIds,
+  giveBishopCaptureIds,
+  giveKnightCaptureIds,
   checkWeatherPieceExistsOrNot,
+  giveRookCapturesIds,
   giveBishopHighlightIds,
 };

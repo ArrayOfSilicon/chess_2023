@@ -1,8 +1,11 @@
-import { giveBishopHighlightIds } from "../Helper/commonHelper.js";
+import { giveBishopHighlightIds, giveRookCapturesIds } from "../Helper/commonHelper.js";
 import { checkSquareCaptureId } from "../Helper/commonHelper.js";
 import { checkPieceOfOpponentOnElement } from "../Helper/commonHelper.js";
+import { giveKingCaptureIds } from "../Helper/commonHelper.js";
 import { checkWeatherPieceExistsOrNot } from "../Helper/commonHelper.js";
-import { giveRookHighlightIds } from "../Helper/commonHelper.js";
+
+import { giveRookHighlightIds, giveBishopCaptureIds } from "../Helper/commonHelper.js";
+import { giveKnightCaptureIds } from "../Helper/commonHelper.js";
 import { giveKingHighlightIds, giveKnightHighlightIds } from "../Helper/commonHelper.js";
 import { giveQueenHighlightIds } from "../Helper/commonHelper.js";
 import { ROOT_DIV } from "../Helper/constants.js";
@@ -10,6 +13,7 @@ import { clearHightlight } from "../Render/main.js";
 import { selfHighlight } from "../Render/main.js";
 import { globalStateRender } from "../Render/main.js";
 import { globalState, keySquareMapper } from "../index.js";
+import { globalPiece } from "../Render/main.js";
 
 // hightlighted or not => state
 let hightlight_state = false;
@@ -17,6 +21,37 @@ let inTurn = "white";
 
 function changeTurn(){
   inTurn = inTurn === "white" ? "black" : "white";
+}
+
+function checkForCheck(){
+
+  if(inTurn === "white"){
+      const whiteKingCurrentPosition = globalPiece.white_king.current_position;
+      const knight_1 =  globalPiece.black_knight_1.current_position;
+      const knight_2 =  globalPiece.black_knight_2.current_position;
+      const king =  globalPiece.black_king.current_position;
+      const bishop_1 = globalPiece.black_bishop_1.current_position;
+      const bishop_2 = globalPiece.black_bishop_2.current_position;
+      const rook_1 = globalPiece.black_rook_1.current_position;
+      const rook_2 = globalPiece.black_rook_2.current_position;
+      const queen = globalPiece.black_queen.current_position;
+
+      const finalCheckList = [];
+      finalCheckList.push(giveKnightCaptureIds(knight_1));
+      finalCheckList.push(giveKnightCaptureIds(knight_2));
+      finalCheckList.push(giveKingCaptureIds(king));
+      finalCheckList.push(giveBishopCaptureIds(bishop_1));
+      finalCheckList.push(giveBishopCaptureIds(bishop_2));
+      finalCheckList.push(giveRookCapturesIds(rook_1));
+      finalCheckList.push(giveRookCapturesIds(rook_2));
+      console.log(finalCheckList);
+      
+      
+    } else {
+    const blackKingCurrentPosition = globalPiece.black_king.current_position;
+    // console.log(blackKingCurrentPosition);
+
+  }
 }
 
 function captureInTurn(square){
@@ -41,23 +76,31 @@ function captureInTurn(square){
 
 // move element to square with id
 function moveElement(piece, id) {
-  changeTurn();
+  
+
   const flatData = globalState.flat();
   flatData.forEach((el) => {
     if (el.id == piece.current_position) {
       delete el.piece;
     }
     if (el.id == id) {
+      if(el.piece)
+      {
+        el.piece.current_position = null;
+      }
       el.piece = piece;
     }
   });
   clearHightlight();
   const previousPiece = document.getElementById(piece.current_position);
+  piece.current_position = null;
   previousPiece.classList.remove("highlightYellow");
   const currentPiece = document.getElementById(id);
   currentPiece.innerHTML = previousPiece.innerHTML;
   previousPiece.innerHTML = "";
   piece.current_position = id;
+  checkForCheck();
+  changeTurn();
   // globalStateRender();
 }
 
