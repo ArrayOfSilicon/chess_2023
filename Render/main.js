@@ -15,7 +15,8 @@ function globalStateRender() {
         // } else if (element.highlight === null) {
       } else {
         const el = document.getElementById(element.id);
-        const highlights = Array.from(el.getElementsByTagName("span"));
+        const highlights = Array.from(el.getElementsByClassName("highlight"));
+        // const highlights = Array.from(el.getElementsByTagName("span"));
         highlights.forEach((element) => {
           el.removeChild(element);
         });
@@ -60,6 +61,12 @@ function initGameRender(data) {
       const squareDiv = document.createElement("div");
       squareDiv.id = square.id;
       squareDiv.classList.add(square.color, "square");
+
+      // label id into square
+      const labelId = document.createElement("span");
+      labelId.textContent = square.id;
+      labelId.classList.add("labelId",`${square.color}-label-id`);
+      squareDiv.append(labelId);
 
       // render blackpawn
       if (square.id[1] == 7) {
