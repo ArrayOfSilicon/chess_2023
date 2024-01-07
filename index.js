@@ -3,7 +3,7 @@ import { GlobalEvent } from "./Events/global.js";
 import { initGameRender } from "./Render/main.js";
 
 // will be usefull till game ends
-const globalState = initGame(); // we are getting the data
+const globalState = initGame();
 let keySquareMapper = {};
 
 globalState.flat().forEach((square) => {

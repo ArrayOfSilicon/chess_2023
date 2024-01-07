@@ -4,7 +4,6 @@ import {
 } from "../Helper/commonHelper.js";
 import { checkSquareCaptureId } from "../Helper/commonHelper.js";
 import { checkPieceOfOpponentOnElement } from "../Helper/commonHelper.js";
-import logMoves from "../Helper/logging.js";
 import { giveKingCaptureIds } from "../Helper/commonHelper.js";
 import { giveQueenCapturesIds } from "../Helper/commonHelper.js";
 import { checkWeatherPieceExistsOrNot } from "../Helper/commonHelper.js";
@@ -24,6 +23,7 @@ import { selfHighlight } from "../Render/main.js";
 import { globalStateRender } from "../Render/main.js";
 import { globalState, keySquareMapper } from "../index.js";
 import { globalPiece } from "../Render/main.js";
+import pawnPromotion from "../Helper/modalCreator.js";
 
 // hightlighted or not => state
 let hightlight_state = false;
@@ -116,9 +116,46 @@ function captureInTurn(square) {
   return;
 }
 
+function checkForPawnPromotion(piece, id) {
+  if (inTurn === "white") {
+    if (
+      piece?.piece_name?.toLowerCase()?.includes("pawn") &&
+      id?.includes("8")
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  } else {
+    if (
+      piece?.piece_name?.toLowerCase()?.includes("pawn") &&
+      id?.includes("1")
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+}
+
+function callbackPawnPromotion(piece, id) {
+  const realPiece = piece(id);
+  const currentSquare = keySquareMapper[id];
+  piece.current_position = id;
+  currentSquare.piece = realPiece;
+  const image = document.createElement("img");
+  image.src = realPiece.img;
+  image.classList.add("piece");
+
+  const currentElement = document.getElementById(id);
+  currentElement.innerHTML = "";
+  currentElement.append(image);
+}
+
 // move element to square with id
 function moveElement(piece, id) {
-  logMoves({ from: piece.current_position, to: id, piece:piece.piece_name }, inTurn);
+  const pawnIsPromoted = checkForPawnPromotion(piece, id);
+
   const flatData = globalState.flat();
   flatData.forEach((el) => {
     if (el.id == piece.current_position) {
@@ -134,12 +171,14 @@ function moveElement(piece, id) {
   clearHightlight();
   const previousPiece = document.getElementById(piece.current_position);
   piece.current_position = null;
-  previousPiece.classList.remove("highlightYellow");
+  previousPiece?.classList?.remove("highlightYellow");
   const currentPiece = document.getElementById(id);
-  currentPiece.innerHTML += previousPiece.querySelector("img").outerHTML;
-  previousPiece.querySelector("img")?.remove();
+  currentPiece.innerHTML = previousPiece?.innerHTML;
+  if (previousPiece) previousPiece.innerHTML = "";
   piece.current_position = id;
-
+  if (pawnIsPromoted) {
+    pawnPromotion(inTurn, callbackPawnPromotion, id);
+  }
   checkForCheck();
   changeTurn();
   // globalStateRender();

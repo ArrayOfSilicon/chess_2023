@@ -1,13 +1,12 @@
 body {
   background-color: #302e2b;
-  justify-content: center;
-  gap: 2vw;
 }
 
 #root {
   display: flex;
   flex-direction: column;
   width: fit-content;
+  margin: auto;
 }
 
 .squareRow {
@@ -17,7 +16,6 @@ body {
 .square {
   width: 75px;
   height: 75px;
-  position: relative;
 }
 
 .white {
@@ -51,39 +49,37 @@ body {
   background-color: rgba(0, 0, 0, 0.17);
 }
 
-.labelId{
+.modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
   position: absolute;
-  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  font-weight: 600;
-  font-size: 14px;
-  left: 2px;
-  top: 0px;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
 }
 
-.white-label-id{
-  color: #6c8158;
-}
-.black-label-id{
-  color: #eeeed2;
+.blur{
+  filter: blur(20px);
 }
 
-.d-flex{
-  display: flex;
-}
-
-#move_logger{
-  width: 30vw;
-  height: 600px;
+.modal p{
+  font-family: sans-serif;
+  font-size: 35px;
+  padding: 4px 8px;
+  background-color: red;
   color: white;
-  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #262522;
 }
 
-.move_list{
-  display: flex;
-  gap: 2vw;
+.modal img{
+  box-sizing: border-box;
+  border: 5px solid transparent;
+  width: 24%;
 }
 
-.leftSide{
-  margin-right: 40%;
+.modal img:hover{
+  border: 5px solid yellow;
+  cursor: pointer;
 }
