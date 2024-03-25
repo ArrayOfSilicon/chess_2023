@@ -24,6 +24,8 @@ import { globalStateRender } from "../Render/main.js";
 import { globalState, keySquareMapper } from "../index.js";
 import { globalPiece } from "../Render/main.js";
 import pawnPromotion from "../Helper/modalCreator.js";
+import HypotheticalClass from "../Others/HypotheticalBoard.js";
+import HypotheticalBoard from "../Others/HypotheticalBoard.js";
 
 // hightlighted or not => state
 let hightlight_state = false;
@@ -153,8 +155,32 @@ function callbackPawnPromotion(piece, id) {
 }
 
 // move element to square with id
-function moveElement(piece, id) {
+function moveElement(piece, id, castle) {
   const pawnIsPromoted = checkForPawnPromotion(piece, id);
+
+  if (piece.piece_name.includes("KING") || piece.piece_name.includes("ROOK")) {
+    piece.move = true;
+
+    if (
+      piece.piece_name.includes("KING") &&
+      piece.piece_name.includes("BLACK")
+    ) {
+      if (id === "c8" || id === "g8") {
+        let rook = keySquareMapper[id === "c8" ? "a8" : "h8"];
+        moveElement(rook.piece, id === "c8" ? "d8" : "f8", true);
+      }
+    }
+
+    if (
+      piece.piece_name.includes("KING") &&
+      piece.piece_name.includes("WHITE")
+    ) {
+      if (id === "c1" || id === "g1") {
+        let rook = keySquareMapper[id === "c1" ? "a1" : "h1"];
+        moveElement(rook.piece, id === "c1" ? "d1" : "f1", true);
+      }
+    }
+  }
 
   const flatData = globalState.flat();
   flatData.forEach((el) => {
@@ -180,7 +206,13 @@ function moveElement(piece, id) {
     pawnPromotion(inTurn, callbackPawnPromotion, id);
   }
   checkForCheck();
-  changeTurn();
+  // if(whoInCheck)
+  // {
+  // }
+  // new HypotheticalBoard(globalState);
+  if (!castle) {
+    changeTurn();
+  }
   // globalStateRender();
 }
 
@@ -991,6 +1023,27 @@ function whiteKingClick(square) {
   } = hightlightSquareIds;
 
   let result = [];
+
+  if (!piece.move) {
+    const rook1 = globalPiece.white_rook_1;
+    const rook2 = globalPiece.white_rook_2;
+    if (!rook1.move) {
+      const b1 = keySquareMapper["b1"];
+      const c1 = keySquareMapper["c1"];
+      const d1 = keySquareMapper["d1"];
+      if (!b1.piece && !c1.piece && !d1.piece) {
+        result.push("c1");
+      }
+    }
+    if (!rook2.move) {
+      const f1 = keySquareMapper["f1"];
+      const g1 = keySquareMapper["g1"];
+      if (!f1.piece && !g1.piece) {
+        result.push("g1");
+      }
+    }
+  }
+
   result.push(checkSquareCaptureId(bottomLeft));
   result.push(checkSquareCaptureId(topLeft));
   result.push(checkSquareCaptureId(bottomRight));
@@ -1098,6 +1151,27 @@ function blackKingClick(square) {
   } = hightlightSquareIds;
 
   let result = [];
+
+  if (!piece.move) {
+    const rook1 = globalPiece.black_rook_1;
+    const rook2 = globalPiece.black_rook_2;
+    if (!rook1.move) {
+      const b1 = keySquareMapper["b8"];
+      const c1 = keySquareMapper["c8"];
+      const d1 = keySquareMapper["d8"];
+      if (!b1.piece && !c1.piece && !d1.piece) {
+        result.push("c8");
+      }
+    }
+    if (!rook2.move) {
+      const f1 = keySquareMapper["f8"];
+      const g1 = keySquareMapper["g8"];
+      if (!f1.piece && !g1.piece) {
+        result.push("g8");
+      }
+    }
+  }
+
   result.push(checkSquareCaptureId(bottomLeft));
   result.push(checkSquareCaptureId(topLeft));
   result.push(checkSquareCaptureId(bottomRight));
